@@ -16,27 +16,45 @@ public class Pathmaker : MonoBehaviour {
 
 //	DECLARE CLASS MEMBER VARIABLES:
 //	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
+	private int counter = 0;
 //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
+	public Transform floorPrefab;
 //	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
+	public Transform pathmakerSpherePrefab;
 
 
 	void Update () {
 //		If counter is less than 50, then:
+		if (counter < 50) {
 //		Generate a random number from 0.0f to 1.0f;
+			float randFloat = Random.Range (0.0f, 1.0f);
 //		If random number is less than 0.25f, then rotate myself 90 degrees;
+			if (randFloat < 0.25f) {
+				transform.Rotate (0f, 90f, 0f);
+			}
 //			... Else if number is 0.25f-0.5f, then rotate myself -90 degrees;
+			else if (randFloat > 0.25f && randFloat < 0.5f) {
+				transform.Rotate (0f, -90f, 0f);
+			}
 //			... Else if number is 0.99f-1.0f, then instantiate a pathmakerSpherePrefab clone at my current position;
+			else if (randFloat > 0.99f) {
+				Instantiate (pathmakerSpherePrefab, transform.position, transform.rotation);
 //		// end elseIf
-
-//		Instantiate a floorPrefab clone at current position;
-
-//		Move forward ("forward" in local space, relative to the direction I'm facing) by 5 units;
+			}
+//			Instantiate a floorPrefab clone at current position;
+			Instantiate (floorPrefab, transform.position, transform.rotation);
+//			Move forward ("forward" in local space, relative to the direction I'm facing) by 5 units;
+			//???????????????????????????????????
 //			Increment counter;
+			counter++;
+		} 
 //			Else:
+		else {
 //			Destroy my game object; 		// self destruct if I've made enough tiles already
+			Destroy (gameObject);
+		}
 	}
 
-} // end of class scope
 
 // MORE STEPS BELOW!!!........
 
@@ -103,3 +121,4 @@ public class Pathmaker : MonoBehaviour {
 // 2. if the raycast "fails" that means there's empty void there, so then instantiate a Wall tile prefab
 // 3. ... repeat until walls surround your entire floorplan
 // (technically, you will end up raycasting the same spot over and over... but the "proper" way to do this would involve keeping more lists and arrays to track all this data)
+}
