@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // MAZE PROC GEN LAB
 // all students: complete steps 1-6, as listed in this file
@@ -16,38 +17,72 @@ public class Pathmaker : MonoBehaviour {
 
 //	DECLARE CLASS MEMBER VARIABLES:
 //	Declare a private integer called counter that starts at 0; 		// counter var will track how many floor tiles I've instantiated
-	private int counter = 0;
+	private int counter;
+
+	//new starting positions for each sphere
+	Vector3 startPos;
+	float xPos;
+	//float yPos;
+	float zPos;
+
+	//pick from 3 dif tiles
+	public Transform FlatTile;
+	public Transform TreeTile;
+	public Transform NormTile;
+	int tileNum;
+
+	public static int globalCounter;
+
+	void Start() {
+		xPos = Random.Range (-50, 50);
+		//yPos = Random.Range (-100, 100);
+		zPos = Random.Range (-40, 40);
+		startPos = new Vector3 (xPos, 0f, zPos); //random starting position
+		counter = Random.Range (50, 100); //random counter
+	}
 //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
-	public Transform floorPrefab;
+	Transform floorPrefab;
 //	Declare a public Transform called pathmakerSpherePrefab, assign the prefab in inspector; 		// you'll have to make a "pathmakerSphere" prefab later
 	public Transform pathmakerSpherePrefab;
 
-
 	void Update () {
+		//Debug.Log (globalCounter);
+		//step 3: <500
+		tileNum = Random.Range (1, 4);
+		if (tileNum == 1) { floorPrefab = FlatTile; }
+		if (tileNum == 2) { floorPrefab = TreeTile; }
+		if (tileNum == 3) { floorPrefab = NormTile; }
+
+
+		if (globalCounter <= 500) {
 //		If counter is less than 50, then:
-		if (counter < 50) {
+			if (counter > 0) {
 //		Generate a random number from 0.0f to 1.0f;
-			float randFloat = Random.Range (0.0f, 1.0f);
+				float randFloat = Random.Range (0.0f, 0.5f);
 //		If random number is less than 0.25f, then rotate myself 90 degrees;
-			if (randFloat < 0.25f) {
-				transform.Rotate (0f, 90f, 0f);
-			}
+				if (randFloat < 0.15f) {
+					transform.Rotate (0f, 90f, 0f);
+				}
 //			... Else if number is 0.25f-0.5f, then rotate myself -90 degrees;
-			else if (randFloat > 0.25f && randFloat < 0.5f) {
-				transform.Rotate (0f, -90f, 0f);
-			}
+				else if (randFloat >= 0.15f && randFloat <= 0.3f) {
+					transform.Rotate (0f, -90f, 0f);
+				}
 //			... Else if number is 0.99f-1.0f, then instantiate a pathmakerSpherePrefab clone at my current position;
-			else if (randFloat > 0.99f) {
-				Instantiate (pathmakerSpherePrefab, transform.position, transform.rotation);
+				else if (randFloat > 0.45f) {
+					Instantiate (pathmakerSpherePrefab, startPos, transform.rotation); //part 5: randomize starting position
 //		// end elseIf
-			}
+				}
 //			Instantiate a floorPrefab clone at current position;
-			Instantiate (floorPrefab, transform.position, transform.rotation);
+				Instantiate (floorPrefab, transform.position, transform.rotation);
 //			Move forward ("forward" in local space, relative to the direction I'm facing) by 5 units;
-			//???????????????????????????????????
+				transform.position += transform.forward * 5f;
 //			Increment counter;
-			counter++;
-		} 
+				counter--;
+				globalCounter++;
+			} else { 
+				Destroy (gameObject); 
+			}
+		}
 //			Else:
 		else {
 //			Destroy my game object; 		// self destruct if I've made enough tiles already
